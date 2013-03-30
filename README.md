@@ -1,4 +1,4 @@
 scrapers
 ========
 
-Collection of Scrapers I am writing
+Collection of Scrapers for the various sites we downloaded
