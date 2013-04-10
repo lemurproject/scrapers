@@ -3,7 +3,8 @@
   (:require [warc-clojure.core :as warc]
             [clojure.tools.cli :as cli]
             [clojure.java.io :as io]
-            [net.cgrand.enlive-html :as html]))
+            [net.cgrand.enlive-html :as html])
+  (:use [clojure.string :only (join split)]))
 
 (defn extract-forum-links
   [page-html]
@@ -18,6 +19,14 @@
 					            link (:href (:attrs (second contents)))]
 					    		[webapp-type link]))        
 					   	(html/select page-html [:div.site-row])))))
+
+(defn extract-503-forums-list
+  "A bunch of forums 503ed for us. Re-initiate a new crawl"
+  [seeds-report]
+  (with-open [wrtr (io/writer "data/remaining-forums.txt" :append true)]
+    (binding [*out* wrtr]
+  		(doseq [l (filter #(. % startsWith "503 ") (line-seq (io/reader seeds-report)))]
+    		(println (nth (split l #"\s+") 2))))))
 
 (defn -main
   [& args]
